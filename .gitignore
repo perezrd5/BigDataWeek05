@@ -6,3 +6,5 @@ artifacts/
 mlruns/
 *.db
 report/qa/
+.venv-local/
+.venv-report/
