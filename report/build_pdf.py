@@ -14,7 +14,12 @@ heading = ParagraphStyle('Heading', fontName='Times-Bold', fontSize=15, leading=
 title = ParagraphStyle('Title', fontName='Times-Bold', fontSize=22, leading=28, alignment=TA_CENTER, spaceAfter=24)
 reference = ParagraphStyle('Reference', parent=body, fontSize=11, leading=15, spaceAfter=18)
 story = [Spacer(1, 90), Paragraph('Scalable ETL and MLOps Pipeline', title), Paragraph('Python Data Processing and Model Deployment', ParagraphStyle('Subtitle', parent=body, alignment=TA_CENTER)), Spacer(1, 48)]
-for line in ['Student name: ____________________', 'Course: ____________________', 'Instructor: ____________________', 'Submission date: ____________________']:
+for line in [
+    'Student name:  Doug Perez',
+    'Course:  DDS8530:  Big Data Integration',
+    'Instructor: Seyedmohsen Hosseini',
+    'Submission date:  November 8, 2026',
+]:
     story.append(Paragraph(line, body))
 for name, paragraphs in PAGES:
     story.extend([PageBreak(), Paragraph(name, heading)])

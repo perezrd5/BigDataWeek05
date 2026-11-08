@@ -23,7 +23,7 @@ Initial local checks were run on November 8, 2026, using Windows and Python 3.12
 
 Timing is a single local observation, not a benchmark. The source data are synthetic. The test-client prediction does not verify network serving. Run-specific evidence and the trained model remain locally in the ignored `artifacts/` folder; regenerate them with the README commands after cloning.
 
-The report PDF has seven pages: one title page, five body pages, and one references page. Every page was rendered and visually inspected. The report uses 12-point Times text, 1.5 line spacing, and explicit body-page breaks. Markdown content and PDF generation scripts are included. Personal title-page fields remain blank for the student to complete.
+The report PDF has seven pages: one title page, five body pages, and one references page. Every page was rendered and visually inspected. The report uses 12-point Times text, 1.5 line spacing, and explicit body-page breaks. Markdown content and PDF generation scripts are included.
 
 ## Docker and live monitoring verification
 
