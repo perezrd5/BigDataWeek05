@@ -32,7 +32,7 @@ def footer(canvas, doc):
     canvas.setFont('Times-Roman', 10)
     canvas.drawRightString(540, 40, str(doc.page))
 
-path = root/'Lab_Report.pdf'
+path = root/'DDS8530_Perez_Assignment05.pdf'
 SimpleDocTemplate(str(path), pagesize=(612,792), rightMargin=72, leftMargin=72, topMargin=62, bottomMargin=62, title='Scalable ETL and MLOps Pipeline', author='').build(story, onFirstPage=footer, onLaterPages=footer)
 reader = PdfReader(path)
 assert len(reader.pages) == 7, f'Expected title + five body + references; got {len(reader.pages)}'

@@ -77,6 +77,6 @@ git remote add origin https://github.com/YOUR_ACCOUNT/BigDataWeek05.git
 git push -u origin main
 ```
 
-No remote is preconfigured. Replace placeholders; publishing is a separate step. The verified submission report is `report/Lab_Report.pdf`. Edit the title fields in `report/build_pdf.py` and rebuild with ReportLab to personalize it. `report/Lab_Report.md` is the editable text source.
+No remote is preconfigured. Replace placeholders; publishing is a separate step. The verified submission report is `report/DDS8530_Perez_Assignment05.pdf`. Edit the title fields in `report/build_pdf.py` and rebuild with ReportLab to personalize it. `report/Lab_Report.md` is the editable text source.
 
 To rebuild the report, install report/requirements.txt in a separate authoring environment, edit the canonical paragraphs in report/report_content.py, then run python report/report_content.py and python report/build_pdf.py. The latter checks the seven-page total and renders page images for review. Markdown edits alone do not update the PDF.
