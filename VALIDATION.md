@@ -1,6 +1,6 @@
 # Validation record
 
-Executed locally on November 2, 2026, using Windows and Python 3.12.14.
+Initial local checks were run on November 8, 2026, using Windows and Python 3.12.14.
 
 ## Passed
 
@@ -35,10 +35,14 @@ The report PDF has seven pages: one title page, five body pages, and one referen
 
 - In Ubuntu on WSL 2, Airflow 2.10.5 successfully ran the `churn_pipeline` DAG after the demo inputs were generated. The manual run completed both `etl` and `train`. [Airflow manual run screenshot](evidence/airflow-manual-run.png)
 
+## GitHub Actions CI verification
+
+- The `Test train and publish` workflow passed on `master`. The tests, demo data seeding, ETL, and model training all succeeded. The `Publish tested container` step was skipped because image publication runs only on `main`. [GitHub Actions run](https://github.com/perezrd5/BigDataWeek05/actions/runs/42528325054)
+
 ## Not executed here
 
 - A live external data API. HTTP pagination and timeout behavior were tested using mocked responses.
-- GitHub Actions, GHCR publication, self-hosted deployment, or rollback on a host.
+- GHCR publication, self-hosted deployment, and rollback on a host.
 
 Top-level dependency versions are pinned. `requirements-lock.txt` captures the tested Windows resolution. Third-party warnings include Dask/NumPy and MLflow/Pydantic deprecations and a scikit-learn/SciPy solver-option warning. They did not fail the tests, but a maintained production dependency set should resolve them and be tested on the deployment platform.
 
