@@ -1,0 +1,6 @@
+.git
+.venv
+data
+mlruns
+report
+*.db

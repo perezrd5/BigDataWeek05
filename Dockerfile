@@ -1,0 +1,8 @@
+FROM python:3.11-slim
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+COPY pipeline pipeline
+COPY artifacts artifacts
+EXPOSE 8000
+CMD ["waitress-serve", "--host=0.0.0.0", "--port=8000", "--call", "pipeline.api:create_app"]

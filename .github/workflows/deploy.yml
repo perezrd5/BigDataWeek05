@@ -1,0 +1,54 @@
+name: Deploy selected lab image
+on:
+  workflow_run:
+    workflows: ['Test train and publish']
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      image:
+        description: Fully qualified tested GHCR image with commit SHA tag
+        required: true
+permissions:
+  contents: read
+concurrency:
+  group: lab-deployment
+  cancel-in-progress: false
+jobs:
+  deploy:
+    if: github.event_name == 'workflow_dispatch' || (vars.ENABLE_LAB_DEPLOY == 'true' && github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_repository.full_name == github.repository)
+    runs-on: [self-hosted, linux, lab-deploy]
+    environment: lab
+    steps:
+      - name: Verify candidate and replace service
+        env:
+          IMAGE: ${{ inputs.image }}
+          TARGET_SHA: ${{ github.event.workflow_run.head_sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -z "$IMAGE" ]; then IMAGE="ghcr.io/${GITHUB_REPOSITORY,,}:${TARGET_SHA}"; fi
+          [[ "$IMAGE" =~ ^ghcr\.io/[a-z0-9_.-]+/[a-z0-9_.-]+:[a-f0-9]{40}$ ]]
+          docker pull "$IMAGE"
+          docker rm -f churn-candidate 2>/dev/null || true
+          docker run -d --name churn-candidate -p 127.0.0.1:8001:8000 "$IMAGE"
+          trap 'docker rm -f churn-candidate >/dev/null 2>&1 || true' EXIT
+          ready=false
+          for attempt in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:8001/health; then ready=true; break; fi
+            sleep 2
+          done
+          "$ready"
+          previous=$(docker inspect --format '{{.Config.Image}}' churn-api 2>/dev/null || true)
+          docker rm -f churn-api 2>/dev/null || true
+          docker run -d --restart unless-stopped --name churn-api -p 127.0.0.1:8000:8000 "$IMAGE"
+          ready=false
+          for attempt in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:8000/health; then ready=true; break; fi
+            sleep 2
+          done
+          if ! "$ready"; then
+            docker rm -f churn-api
+            if [ -n "$previous" ]; then docker run -d --restart unless-stopped --name churn-api -p 127.0.0.1:8000:8000 "$previous"; fi
+            exit 1
+          fi

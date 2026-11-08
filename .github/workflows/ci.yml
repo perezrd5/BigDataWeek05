@@ -1,0 +1,35 @@
+name: Test train and publish
+on: [push, pull_request, workflow_dispatch]
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+      - run: pip install -r requirements.txt
+      - run: python -m pytest -q
+      - run: python -m pipeline.seed && python -m pipeline.etl && python -m pipeline.train
+      - uses: actions/upload-artifact@v4
+        with:
+          name: model-and-metadata
+          path: artifacts/
+      - name: Publish tested container
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          IMAGE="ghcr.io/${GITHUB_REPOSITORY,,}:${GITHUB_SHA}"
+          echo "$GH_TOKEN" | docker login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
+          docker build -t "$IMAGE" .
+          docker run -d --name smoke -p 8000:8000 "$IMAGE"
+          for attempt in $(seq 1 30); do curl -fsS http://localhost:8000/health && break || sleep 2; done
+          curl -fsS http://localhost:8000/health
+          docker push "$IMAGE"
